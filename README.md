@@ -2,31 +2,40 @@
 
 
 Index
+
 1. Introduction
+
 2. What is a Particle System and why it's important?
-2.1 Looking the past
+
+2.1 Origins
+
 2.2 Particle systems used nowadays
+
 2.3 The components
+
 2.3.1 The emitters
+
 2.3.2 The particles
-3. Our approach
-4. The structure
-4.1 Particle system module
-4.2 Particle class
-4.3 It’s all about memory!
-4.4 Let’s talk about pools
-5. More parameters
-6. TODOs
-6.1 TODO 1 - Getting the emitter data
-6.2 TODO 2 - Let’s introduce the pool
-6.3 TODO 3 - Improving the pool
-6.4 TODO 4 - Color Interpolation & blending
-6.5 TODO 5 - Fire and Smoke
-6.6 BONUS CODE - Vortices
+
+3. The structure
+
+3.1 Particle system module
+
+3.2 Particle class
+
+3.3 It’s all about memory!
+
+3.4 Let’s talk about pools
+
+4. More parameters
+
 7. Performance
+
 8. Improvements and further work
+
 9. References
-10. License
+
+
 
 ## 1. Introduction
 Particles are a key element in videogames, althought they may be unnoticed, they are those details that help the player get more deeply into the magic circle. They are also key on showing the quality of the product, with better or worse particle animations, and that's the most ironic thing, being just particles, apparently innsignificant elements, they manage to play a major role on the gameplay experience. Here I, Joan Damià, will explain you in detail what are particles and how to implement them in a 2D sdl game.
@@ -36,138 +45,86 @@ I will try to focus on showing you the heory around particles, some basic implem
 ![giphy-downsized-large](https://user-images.githubusercontent.com/79161216/165123525-396444cb-e639-454e-8a20-74c2a78d0bc2.gif)
 
 
-## 2. What is a Particle System and why do we care?
-What is a particle system and why do we need one? Well, first let’s dig a bit into computer graphics stuff.
+## 2. What is a Particle System and why it's important?
 
-If you have programmed games or computer graphics related stuff is quite common to work with sprites and sprites sheets. For those unfamiliar with this term, a sprite is simply a two-dimensional bitmap used to be displayed on the screen. It is used especially in 2D videogames to render both static and animated elements of the game. It’s also very frequent to find them as a pixel art form. To save memory they are normally grouped into a same bitmap called sprite sheet. Down below there’s an example of a sprite sheet of Fire Man from the NES Mega Man game:
+What is a particle system and why do we need one? 
 
-77885
+First of all we have tot talk about sprites. Sprites, as you probably know, are two dimensional bitmaps displayed on screen that represent different elements like characters or items. 
 
-This example is very simple but sprites can become complex…
+![hero_spritesheet](https://user-images.githubusercontent.com/79161216/165140258-d315a4e2-6e50-4c23-8e23-6eb4d0c07e93.png)
 
-super_sonic_1_sprite_sheet_by_winstontheechidna-dbhwb26
-
-…a lot actually…
-
-sm
-
-So, what happens when we need something more organic, more chaotic; like a fire, a smoke, a fog, fireworks, snow… Yes, you’ve guessed it. It has to be drawn by hand by the artist. If the game has a low-res pixel art style it may not be a problem, but as the game becomes more detailed natural elements are more difficult to reproduce and if you have to timeline for your project this is a problem.
-
-This is a spritesheet of a fire caused by a a bomb in Gunbird (Psiskyo, 1994):
-
-tetsu_explosion_death
-
-You start to see the problem now right? What if the game is too complex to do it by a hand or is actually a 3D game? What if we want something like this:
-
-explosion_01_dribbble
-
-Well, that’s when particle systems come into play.
-
-A particle system is a structure that allows you to simulate particles of different types in an organic way with the advantage of just tweaking some particle properties to get the exact results you want very quickly and without effort. And the best part: you don’t have to draw any of these particles. You just need a base texture and that’s all. The system will be in charge of rendering the particles, the effects (such as glowing), physics calculations, emission rate and so on. You don’t need to worry about anything, just playing around with it to get what you want.
-
-This is just a generic description. Let’s dive into more techical details of what this all means.
-
-Back to index
-
-2.1 A bit of history
-Particle systems are very common in computer graphics and have been used since the early 1980s. One of the first implementations was seen in Star Trek II: The Wrath of Khan in 1982. The film featured a sequence called Genesis Demo where a planet is terraformed by a torpedo to make it habitable. For achieving this effect William T. Reeves, a researcher at Lucasfilm Ltd, did a research on particle systems on a paper called Particle Systems - A Technique for Modeling a Class of Fuzzy Objects.
-
-This is the sequence mentioned above, as you can see the results are quite impressive considering the time this was done:
+When the level of detail rises, adding natural elements, the artist should draw all the details by himself for every sprite, and it would still feel weird because of the repeating animation. When we need something more organic like a fire or snow it has to be drawn by hand by the artist. If the game has a low-res pixel art style it may not be a problem, but as the level of detail and graphic power rises, making all of these details manualy can become a hard task.
 
 
-Reeves describes a particle system in this paper as follows:
+And here is when particle systems appear.
 
-“A particle system is a collection of many minute particles that together represent a fuzzy object. Over a period of time, particles are generated into a system, move and change from within the system, and die from the system.”
-
-So basically a particle system contains a bunch of tiny objects called particles that have some kind of movement and a lifetime. These particles are generated and destroyed over time to simulate a flow. Hence, a particle system is the structure in charge of managing the living particles and generate new ones when needed.
-
-Organic effects are difficult to simulate but what particle systems do is simplify the problem. Like in physics, we divide the effect in tiny and controllable particles that as a whole seems like something bigger that behaves as natural phenomenas. By managing a large group of these particles we can represent natural effects like water, fire or smoke so much easier than if we tried to treat it as a whole thing.
-
-2.2 Particle systems nowadays
-Since the Genesis effects things have evolved quickly but the foundation is the same as before. Here’s a short video on how Pixar Animation Studios uses particle systems nowadays. William T. Reeves is currently working there too!
+A particle system is a structure that allows you to simulate particles of different types in an organic way with just modifying a base texture. The rest is made thanks to the program, that with the correct instructions, can take the texture and modify it, so that it creates the particles. 
 
 
-Nowadays particle systems can be found in any almost any game engine or 3D software. Maya and 3D Max have one as well as Unity or Unreal Engine. Particle are really important in a lot of videogames as it makes huge improvement. Particles makes the enviroment or the the player stands out and it really adds up a lot to the game. Let’s see a few examples.
+### 2.1 Origins
 
-Take for example the next teamfight in League of Legends, as you can see particles makes a huge diiference when producing things like magic spells:
+Particle systems have become a key resource in many different productions that involve digital effects since the 80s, and it's understandable, as they are a quite simple way of simulating natural particle movement. 
 
-LOLGIF
+William T. Reeves
 
-Now try to picture it without all this particle effects, it wouldn’t’ make sense right?
+Particles are, as you can imagine, individual elements in movement (randomized or not) that have a limited lifespan. Particles have to have a lifespan to simulate flow and a big source of elements. Particle systems are based on creating, destroying and guiding the movement of the particles needed. The fact that particles are (mostly) tiny individual elements that we can control (number and frequency of spawning and speed), we can simulate natural fenomenons like fire in a more simple way that just realisticly trying to program fire. 
 
-But particle systems are also used to generate more realistic things like these explosions in Battlefield:
+![Fire_ashley](https://user-images.githubusercontent.com/79161216/165143383-9353838a-5dfa-4150-b8e5-808a06a495a0.gif)
 
-battlefield
 
-Or more subtle like the main menu in Hollow Knight:
+### 2.2 Particle systems used nowadays
 
-animated gif-downsized_large
+As said before, particle systems have turned out to be a must have system in movies, videogames and more, let's put some examples: Animated companies like Disney or Pixar use particle systems to represent natural or organic elements of the enviroment of their movies. 
 
-Moreover, particle systems can be a double-edged sword too. Aside from being used for creating VFX as well as hiding visual bugs. For instance in fighting games collision geometry is usually hidden by particles to hide erros like 3D models intersection.
+https://youtu.be/7yorxr8KZIE
 
-stnerf
+As you probably guessed, particle systems in videogames are also key in the developement to add detail to the different levels as well as making these details much easier. 
 
-Okay now that you get the idea let’s see what composes a particle system.
+https://youtu.be/oTSzsTEwBEc
 
-2.3 The components
+https://youtu.be/WbLlhsftLvI
+
+As you have seen in the past examples, particles can be used to represent venomous smoke that fades away if you destroy the source, ambiance particles like dust or even water. PArticle systems make the job of creating these effects very easy thanks to the fact that the program does most of the job while the programmer just puts the parameters to get the effect they want.
+
+At this point, what are the components of particle systems?
+
+## 2.3 The Components
+
 2.3.1 The emitters
-Particle systems usually contain what it’s known as an emitter. An emittter is the object in charge of spawning all the particles and defining the particles behaviour and their properties. An emitter is in charge of the following things:
 
-Controlling the emission rate of particles. Basically how many particles are generated per frame.
-The postion where the particles are generated.
-Particles’ velocity and movement.
-Particles life.
-Other particle properties like colors, transparency or size.
-The emitter itself contains all the particles that will be updated and die over time. All this data is transfered from the emitter to all this particles so they behave like they are suposed to. Changing this data will change how the particles in that emitter will behave.
+Don't have to put much detail on what an emitter does right? Just in case, emitters are the main source of particles, with them we can control many important factors that will show different effects.
 
-A particle system can be composed of multiple different kind of emitters that at the same time can also have emitters inside of them. This inception thing can go as far as we want depending of what we want to simulate. For example, for the Genesis Effect Reeves explains in his paper that they used a tree structure in order to create this subemitters. By using this hierearchy there’s a particle system which acts as a parent and contains subsystems that contains other subsystems.
+ -Emission rate, which stands for the amount of particles generated per frame.
+ 
+ - The coordinates where the particles spawn
+
+ -Particles lifespan.
+ 
+ -Particles movement pattern and initial direction.
+ 
+ -Physical properties like color, size...
+ 
+The emitter also contains all the particles that will be updated and wiped out at the end of their lifespan. This information is crucial, as it's transfered to the particles so that they behave as desired. 
+
+It is important to say that emitters can be created in other emitters to put more detail into the particles of a certain area or element, for example, the flamethrower from Battlefield:
+
+https://youtu.be/3NzBabyctCI
 
 2.3.2 The particles
-Now that we have the base, let’s talk about particles. As said before particles inherit its properties from the emitter they came from. But what is exctly the particle itself? The particle itself it’s just a simple moving texture that is renderered on screen. In 3D enviroments they use something called billboards which is basically an image that always faces the camera. But we don’t need to worry about that as we will focus only in 2D.
 
-This texture can be anything we want that fits our purpose. It’s usually a balck and white fuzzy texture that will be tinted when rendered. A good example is this set of particle textures down below:
+The particles themselves are textures moving on screen, just that. The trick is that modifying them with the data from the emitters, we can make them look like many things: Snow, water, fire, dust, sand, embers or even cinder. It all depends on the rate of spawning, their movement, if they are big or small...
 
-particle_set
+Many times, the textures that are used to represent the particles look like this
 
-Particle properties along with the emitter can be anything you like. The possibilities are endless. The Unity engine for example has big spectrum when it comes to emitters and particle properties, you can change anything you want and this flexibility allows you to generate almost any type of particle you can think of. You can choose the size, the color, the speed, the emitter shape, the texture and a lot more. Down below there’s a screenshoot of this options in Unity.
+![f300aa6fe4b2047972217b6226d0dca7](https://user-images.githubusercontent.com/79161216/165149500-e83df52c-9470-48c7-8288-94b766d91f5a.jpg)
 
-psystem_unity
+They doesn't look useful in this scale and their appearence. However, with the right indications we can transform them so that they create the ilusion we want. 
 
-But how this particles are managed thorugh the system? do we need to generate a completly new particle each time? Will this affect the perdormance? We will discuss this in the next section.
-
-When working in 3D enviroments particle textures are often mapped in a 3D geometry to create more interesting effects. This is called blending geometry and it’s quite impressive! Here’s a quick video on how particles are done in League of Legends using this technique.
+In our case, our particle system is based in a 2D scenario. There are many ways to approach the creation of a particle system, this is one of them
 
 
-Okay, I think that’s enough theory for now, we must build the system in order to use it. So let’s get to work!
-
-Back to index
-
-3. Our approach
-Okay but what are we going to do? We will keep it simple but solid and flexible. Our particle system will have the following features:
-
-It will be 2D (although almost everything explained here can be transfered into 3D if needed).
-Particles movement will be linear but with the option of interpolate between start and end speed.
-An atlas full of particle textures will be used to render different types of particles.
-All data wil be outside the code, written in an xml file.
-A pool will be used as a container for emitter particles. We will talk about what this means soon, for now everytime we talk about pools just think of a data container like an array of particles.
-Diferent type of emitters, hence diferent particles will be created through parametrization. This means will only have an emitter and particle class and depending of the data they both recieve the effect will be different.
-Emitter properties will be covered more in depth later but they will be the next ones:
-Angle range of particles’ flow
-Rotation speed of particles
-Particles’ speed
-Particles’ size
-Emission rate
-Particles’ life
-Particles’ texture
-Particles’ colors
-Particle’s blend mode
-Emitter life
-To create an emitter we will call a function in our scene that will return a pointer to the emitter. With this pointer we can call emitters methods for stoping or starting its emission or simply to destroy it. At the end we want to have something like this:
-emitter = AddEmitter(positon, EMITTER_TYPE);
-4. The structure
+## 3. The structure
 Down below there’s a simple scheme of the structure of the system:
-
-uml
 
 So basically we have a module called j1ParticleSystem that will contain a list of emitters. Inside these emitters we will have all the data we have gotten from the xml and they will contain a pool of particles that will be also updated and rendered on screen.
 
@@ -432,202 +389,6 @@ If we set vortex speed to 0 particles will slow down when they get coloser. We c
 
 implosions
 
-Back to index
-
-6. TODOs
-6.1 TODO 1 - Getting the emitter data
-Load emitter data into the emitter data vector:
-
-We just want to load the emitter data from the “fire” emitter for now
-The for loop already parses the xml file for you. Just search for the emitter type “fire”.
-Once you find it use LoadEmitterData() to fill the vector. Use EMITTER_TYPE_FIRE for the enum.
-SOLUTION
-
-std::string emitterType = emitters.attribute("type").as_string();
-
-		if (emitterType == "fire")
-			LoadEmitterData(emitters, EmitterType::EMITTER_TYPE_FIRE);
-6.2 TODO 2 - Let’s introduce the pool
-TODO 2.1:
-
-Declare an static array of 100 particles inside the ParticlePool header.
-SOLUTION
-
-Particle particleArray[100];
-TODO 2.2 - Convert particleArray into a free list:
-
-Make the firstAvailable pointer point to the first element of the pool
-Make each particle inside the pool point to the next one. Use the SetNext() method
-Make the last particle point to nullptr
-SOLUTION
-
-	// The first particle is available
-	firstAvailable = &particleArray[0];
-
-	// Each particle points to the next one
-	for (int i = 0; i < 100; i++)
-		particleArray[i].SetNext(&particleArray[i + 1]);
-
-	// The last particle points to nullptr indicating the end of the vector
-	particleArray[poolSize - 1].SetNext(nullptr);
-TODO 2.3 - Generate a new particle from the pool:
-
-Use firstAvailable to Init the particle.
-But remember to move the firstAvailable pointer to the next particles so we don’t lose track of it.
-Also check first that the pool is not empty before doing anything. Use assert for this.
-SOLUTION
-
-// Check if the pool is not full
-	assert(firstAvailable != nullptr);
-
-	// Remove it from the available list
-	Particle* newParticle = firstAvailable;
-	firstAvailable = newParticle->GetNext();
-
-	// Initialize new alive particle
-	newParticle->Init(pos, startSpeed, endSpeed, angle, rotSpeed, startSize, endSize, life, textureRect, startColor, endColor, blendMode);
-TODO 2.4 - Update and draw living particles in the pool.
-
-If it’s alive update it, draw it and make sure to return true
-If a particle is dead it becomes the first available in the pool. Use IsAlive() method to check this.
-SOLUTION
-
-	bool ret = false;
-	
-	for (int i = 0; i < 100; i++)
-	{
-		if (particleArray[i].IsAlive())
-		{
-			
-			particleArray[i].Update(dt);
-			particleArray[i].Draw();
-			ret = true;
-		}
-		else // if a particle dies it becomes the first available in the pool
-		{
-			// Add this particle to the front of the vector
-			particleArray[i].SetNext(firstAvailable);
-			firstAvailable = &particleArray[i];
-		}
-	}
-
-	return ret;
-When you’re don you should get something like this:
-
-todo1
-
-But what happens if particles have 100 of life? We don’t have enough particles in the pool. Let’s fix this.
-
-6.3 TODO 3 - Improving the pool
-TODO 3.1 - Calculate pool size:
-
-Come up with a simple formula to know how big the pool must be. Only one line of code!
-The number calculated must be always big enough so the pool it’s NEVER EMPTY.
-Hint: the variables maxParticlesPerFrame and maxParticleLife play a big role here.
-Pencil and paper will help!
-SOLUTION
-
-	// Pool size calculations
-	poolSize = maxParticlesPerFrame * (maxParticleLife + 1);
-TODO 3.2 - Allocate memory for the pool:
-
-Use GetPoolSize() from the given emitter.
-Remember to free the memory!
-Once this is done try to execute again. It should not have any pool size problems anymore!
-SOLUTION
-
-	// Fill the pool according to poolSize needed for the emitter
-	poolSize = emitter->GetPoolSize();
-	particleArray = new Particle[poolSize];
-	delete[] particleArray;
-	particleArray = nullptr;
-6.4 TODO 4 - Color Interpolation & blending
-TODO 4.1 - Interpolate between start and end color
-
-Create a method that takes to colors and a time step and returns the interpolated SDL_Color.
-You can use the pState.pLive.t as the time step.
-For color use pState.pLive.startColor and pState.pLive.endColor.
-Use the linear interpolation formula: b= a + (b - a) * t
-SOLUTION
-
-SDL_Color Particle::RgbInterpolation(SDL_Color startColor, float timeStep, SDL_Color endColor)
-{
-	SDL_Color finalColor;
-
-	finalColor.r = startColor.r + (endColor.r - startColor.r) * timeStep;
-	finalColor.g = startColor.g + (endColor.g - startColor.g) * timeStep;
-	finalColor.b = startColor.b + (endColor.b - startColor.b) * timeStep;
-	finalColor.a = startColor.a + (endColor.a - startColor.a) * timeStep;
-
-	return finalColor;
-}
-You should see this on screen:
-
-todo2
-
-TODO 4.2 - Adapt de blit particle method to take blending mode as an argument:
-
-Use SDL_SetTextureColorMod() and SDL_SetTextureAlphaMod() to setup the color.
-This has to be done just before calling SDL_RenderCopyEx().
-Use the pState.pLive.blendMode and variable.
-SOLUTION
-
-	if (SDL_SetTextureColorMod(texture, color.r, color.g, color.b) != 0)
-		LOG("Cannot set texture color mode. SDL_SetTextureColorMod error: %s", SDL_GetError());
-
-	if (SDL_SetTextureAlphaMod(texture, color.a) != 0)
-		LOG("Cannot set texture alpha mode. SDL_SetTextureAlphaMod error: %s", SDL_GetError());
-TODO 4.3 - Adapt de blit particle method to take blending mode as an argument:
-
-Use SDL_SetTextureBlendMode.
-As before call it before we the actual render.
-Use the pState.pLive.blendMode variable.
-SOLUTION
-
-	if (SDL_SetTextureBlendMode(texture, blendMode) != 0)
-		LOG("Cannot set texture blend mode. SDL_SetTextureBlendMode error: %s", SDL_GetError());
-You should see something like this on screen:
-
-todoblending
-
-6.5 TODO 5 - Fire and Smoke
-TODO 5 - Tweak the xml parameters:
-
-Change the emitter data in order to get a flame.
-Uncomment code in Scene update to blit the torch.
-Optional: create a new one and try simulate smoke.
-SOLUTION
-
-      <emitter type ="fire">
-        <angleRange min ="80" max ="110"/>
-        <rotSpeed value ="0" randMin = "-1" randMax ="1"/>
-        <startSpeed value ="200" randMin = "0" randMax ="1"/>
-        <endSpeed value ="200" randMin = "0" randMax ="1"/>
-        <startSize value ="200" randMin ="0" randMax ="1"/>
-        <endSize value =" 80" randMin ="1" randMax ="1"/>
-        <emitNumber value ="1"/>
-        <emitVariance value ="0" randMin = "0" randMax ="1"/>
-        <maxParticleLife value ="100" randMin = "0" randMax ="1"/>
-        <textureRect x="0" y="0" w="128" h="128"/>
-        <startColor r ="255" g="100" b="0" a="255"/>
-        <endColor r ="210" g="210" b="210" a ="0"/>
-        <blendMode mode ="add"/>
-        <lifetime value ="-1"/>
-      </emitter>
-Now we have a fire!
-
-finan_re
-
-6.6 BONUS CODE - Vortices
-Delete the particle movement equations and uncomment this functions to add a vortex!
-
-	// Calculates new particle position.
-	CalculateParticlePos(dt);
-Now everytime you approach the torch to the top left corner particles will be affected by the turbulence of the vortex like this:
-
-vortextodo
-
-Back to index
 
 7. Performance
 Performance of particle systems really depends of how many particles are being rendered and moved at the same time on screen. At the end of the day, any particle system will eventually crash above a certain number. The higher the number the better the performance.
