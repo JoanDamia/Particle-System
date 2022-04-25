@@ -31,10 +31,7 @@ Index
 
 7. Performance
 
-8. Improvements and further work
-
-9. References
-
+9. Useful References
 
 
 ## 1. Introduction
@@ -407,24 +404,7 @@ However, overall the system has a good performance if it’s not overused.
 
 Back to index
 
-8. Improvements and further work
-This particle system is quite cool but there’s a lot of room for improvement. Here’s a few examples of what can still be done:
-
-Subemitters: create a system within a system. An emitter that spawn other emitters that spawn other emitters and so on. We could use this for fireworks for examples.
-Vortex system: create an emitter that instead of spawining particles generate moving vortices that result in moving turbulences.
-Multi emitters: create emitters that spawn different type of particles so if we have an explosion this emitter would spawn fire first, a wave and the smoke.
-Shapes: instead of limiting emitters to have a single position point they could have shapes to simulate for example a ring of fire.
-Animations: instead of rendering a single texture for each particle we could render an animation in loop to simulate more complex effects.
-Physics: we’ve seen turbulences with vortices but you can do much more. Paraboles, circular movement different types of turbulences like using the Perlin noise. But there’s much more!
-Collisions: you could add colissions between particles to generate more interesting effects.
-Other usings: we can use particle systems as line drawings so instead of rendering the particle we render it’s trace. This way we can create organic grass for example. Like this white.sand by Alvy Ray Smith of Lucasfilm:
-whitesandslg
-
-These are some suggestions but the possibilities are endless so have fun with them!
-
-Back to index
-
-9. References
+8. Useful References
 Webs and forums:
 
 http://buildnewgames.com/particle-systems/
@@ -467,31 +447,3 @@ Sprites and images:
 
 https://opengameart.org/content/lens-flares-and-particles
 https://dribbble.com/shots/1925630-Explosion
-Back to index
-
-10. License
-
-MIT License
-
-Copyright (c) 2018 nintervik
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-Back to index
-
