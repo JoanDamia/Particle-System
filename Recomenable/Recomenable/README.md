@@ -1,7 +1,6 @@
 # 2D-Particle-System
 
 * [Github repository](https://github.com/nintervik/2D-Particle-System)  
-* [Website](https://nintervik.github.io/2D-Particle-System/)
 * [Releases](https://github.com/nintervik/2D-Particle-System/releases)
 
 
