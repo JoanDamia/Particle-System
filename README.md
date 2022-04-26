@@ -29,9 +29,9 @@ Index
 
 4. More parameters
 
-7. Performance
+5. Performance
 
-9. Useful References
+6. Useful References
 
 
 ## 1. Introduction
@@ -128,7 +128,7 @@ So basically we have a module called j1ParticleSystem that will contain a list o
 In case you wonder how the whole code is organized here’s a simple scheme. Our application has a module for each category call. Our application code is structured in modules. The main module (called j1App.cpp) manages all the other modules calling in a loop its respective awake, preupdate, update, postupdte, cleanup that they share thorugh a base class j1Module. So our j1ParticleSystem will be one of these modules that will update all the emitters that at the same time will update its respective particles. Down below a basic scheme of this shows what has been explained:
 
 
-4.1 Particle system module
+### 3.1 Particle system module
 This is the module in charge of everything that happens with our particles. We will not cover how it works as it’s something generic that can be implemented according to your needs and this tutorial is focused on the particles. With this module you can:
 
 Destroy an existing emitter
@@ -153,7 +153,7 @@ Read all the data from the xml file to pass it to the emitter each time we creat
         <blendMode mode ="add"/>
         <lifetime value ="-1"/>
       </emitter>
-4.2 Particle class
+### 3.2 Particle class
 The particle class is very simple, just a lot of data that will define its behavior and a couple of methods to draw and updated its position. Let’s see how we approach this. We will consider a particle as a moving point in space. It will have a postion, a velocity and a texture at least. Here’s a simple diagram of a basic particle:
 
 particle_scheme
@@ -186,7 +186,8 @@ And that’s pretty much it. Update and move in loop. Of course the system will 
 
 This is very nice but have a problem, a huge one. But the problem here resides in the fact of how generate a constant flow of particles in our code. Well, let’s see how.
 
-4.3 It’s all about memory!
+### 3.3 It’s all about memory!
+
 The pool is the most important and fundamental part of the system, everything else is secondary; you can always add more data to the particles whenever you need it.
 
 Let’s adress the big elephant in the room. If we need to generate a constant of flow of particles that are born and die over time that means we have to constantly create an destroy particle objects using the heap. And that’s not a good thing for our CPU. Let’s see why.
@@ -196,7 +197,6 @@ When you write the ‘new’ operator in your program you allocate enough memory
 Memory fragmentation: as you know memory is a continuous space divide in bytes. If we constantly allocate and destroy memory we will have what’s called ‘memory fragmenation’. This means that all the data is not allocated next to each other but there’s some gap in between. This happens because we’ve destroyed a particle that was allocated in the middle of other particles and now we have small gaps that occupies space but cannot be filled with other particles as they might not be small enough. We have free memory but cannot use it. As Bob Nystrom says in his article about Pools:
 “It’s like trying to parallel park on a busy street where the already parked cars are spread out a bit too far. If they’d bunch up, there would be room, but the free space is fragmented into bits of open curb between half a dozen cars.”
 
-mem_frag
 
 Framerate drop: another usual thing that can happen in this scenario is bad performance in our application. This has to do with the garbage collection. The garbage collection is the process which the computer uses to manage resources automatically. It is in charge of freeing up memory when it’s no longer needed. This process is usually done under the hood and we don’t actually notice anything. For example, when we declare a variable inside a function and then this function has finsihed its execution this variable will be destroyed from memory as it lives only within the function scope. However, when freeing up mempory at high rates can cause the programe to use a lot of resources to take care of that resulting in a lag or frame drop in our application.
 
@@ -204,7 +204,8 @@ Risk of memory leaks: if you you’re constantly allocating memory it’s very e
 
 It’s all about memory! It’s a not infinite but valuable resource and we must take care of use it wisely. To avoid this let’s introduce the pool.
 
-4.4 Let’s talk about pools
+### 3.4 Let’s talk about pools
+
 A pool is simply container of reusable objects. This means that when objects are extracted from the pool they can go back to it when they are no longer needed by the program. It’s like a fountain of water that have a closed loop of reusable water. That’s perfect for our particles. We no longer need to create and destroy particles, we can allocate enough space for the pool and use always the same particles; that’s great, isn’t it?
 
 To implement this pool we will follow the great implementation done by Bob Nystrom in his article of his book Game Programming Patterns.
@@ -332,7 +333,7 @@ The obvious thing would be to do poolSize = particleMaxLife * emissionRate. It�
 poolSize = (particleMaxLife + 1) * emissionRate;
 And that’s it. The emitter class will not be covered but it’s quite simple. The important thing is the pool.
 
-5. More parameters
+## 4. More parameters
 But as you’ve seen we had a lot of parameters in xml file to tweak the particle behavior. In this table there’s all the particle properties explained:
 
 ATTRIBUTE	DESCRIPTION
@@ -349,13 +350,7 @@ Blend mode	How colors interact wich each other. We can create glow of effects us
 Life time	How many seconds an emitter lives.
 We can have a lot of randomization to make the effect even more organic. That depends on you.
 
-So if we want to create a fire what we need to do is to to change the start and end color, put the blending mode to additive to make it glow, reduce alpha color over time… And will get something like this.
-
-torch_gi
-
-But we can do explosions too:
-
-explosions
+So if we want to create a fire what we need to do is to to change the start and end color, put the blending mode to additive to make it glow, reduce alpha color over time… And will get fire.
 
 Another interesting thing is too play with the particle movement. We have done a linear movment but we can simulate paraboles, accelerated movement, circular and so on. A really cool and simple thing to do is to implement turbulunce in form of vortices. To put it simple, a vortex is like an spinning air wheel that causes objects to change it’s movment in a circular and chatoic way. We can simulate this by using a simple ad-hoc formula. In this article is explained how it’s done.
 
@@ -377,16 +372,12 @@ And then we need to modify particle movement like this:
 
 	pState.pLive.pos.x += (vx - pState.pLive.vel.x) * factor + pState.pLive.vel.x * dt;
 	pState.pLive.pos.y += (vy - pState.pLive.vel.y) * factor + pState.pLive.vel.y * dt;
-And we can get really cool things like this:
 
-particles
 
 If we set vortex speed to 0 particles will slow down when they get coloser. We can even do implosions!
 
-implosions
 
-
-7. Performance
+## 5. Performance
 Performance of particle systems really depends of how many particles are being rendered and moved at the same time on screen. At the end of the day, any particle system will eventually crash above a certain number. The higher the number the better the performance.
 
 In our case it handles particles really well but framrate starts to drop when we have have about 2000 particles being rendered and moved on screen. If we have a vortex performance is worse as it needs to do a lot calculations for each individual particle.
@@ -401,11 +392,10 @@ brofiler
 
 However, overall the system has a good performance if it’s not overused.
 
-Back to index
-
-8. Useful References
+## 6. Useful References
 Webs and forums:
-
+https://nintervik.github.io/2D-Particle-System/
+https://github.com/scarsty/SDL2-particles
 http://buildnewgames.com/particle-systems/
 http://rbwhitaker.wikidot.com/2d-particle-engine-2
 http://lazyfoo.net/tutorials/SDL/38_particle_engines/index.php
