@@ -1,0 +1,113 @@
+#include "p2Defs.h"
+#include "p2Log.h"
+#include "j1App.h"
+#include "j1Render.h"
+#include "j1Textures.h"
+
+#include "SDL_image/include/SDL_image.h"
+#pragma comment( lib, "SDL_image/libx86/SDL2_image.lib" )
+
+j1Textures::j1Textures() : j1Module()
+{
+	name = "textures";
+}
+
+j1Textures::~j1Textures()
+{}
+
+bool j1Textures::Awake(pugi::xml_node& texturesNode)
+{
+	LOG("Init Image library");
+	bool ret = true;
+	int flags = IMG_INIT_PNG;
+	int init = IMG_Init(flags);
+
+	if ((init & flags) != flags)
+	{
+		LOG("Could not initialize Image lib. IMG_Init: %s", IMG_GetError());
+		ret = false;
+	}
+
+	return ret;
+}
+
+bool j1Textures::Start()
+{
+	LOG("start textures");
+	bool ret = true;
+	return ret;
+}
+
+bool j1Textures::CleanUp()
+{
+	LOG("Freeing textures and Image library");
+	std::list<SDL_Texture*>::const_iterator item;
+
+	for (item = textures.begin(); item != textures.end(); ++item)
+	{
+		SDL_DestroyTexture(*item);
+	}
+
+	textures.clear();
+	IMG_Quit();
+	return true;
+}
+
+SDL_Texture* const j1Textures::Load(const char* path)
+{
+	SDL_Texture* texture = NULL;
+	SDL_Surface* surface = IMG_Load(path);
+
+	if (surface == NULL)
+	{
+		LOG("Could not load surface with path: %s. IMG_Load: %s", path, IMG_GetError());
+	}
+	else
+	{
+		texture = LoadSurface(surface);
+		SDL_FreeSurface(surface);
+	}
+
+	if (texture != NULL)
+		textures.push_back(texture);
+	else
+		return NULL;
+
+	return texture;
+}
+
+bool j1Textures::UnLoad(SDL_Texture* texture)
+{
+	std::list<SDL_Texture*>::const_iterator item;
+
+	for (item = textures.begin(); item != textures.end(); ++item)
+	{
+		if (texture == (*item))
+		{
+			SDL_DestroyTexture(*item);
+			textures.remove(*item);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+SDL_Texture* const j1Textures::LoadSurface(SDL_Surface* surface)
+{
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(App->render->renderer, surface);
+
+	if (texture == NULL)
+	{
+		LOG("Unable to create texture from surface! SDL Error: %s\n", SDL_GetError());
+	}
+	else
+		return texture;
+
+	return NULL;
+}
+
+void j1Textures::GetSize(const SDL_Texture* texture, uint& width, uint& height) const
+{
+	SDL_QueryTexture((SDL_Texture*)texture, NULL, NULL, (int*)&width, (int*)&height);
+}
