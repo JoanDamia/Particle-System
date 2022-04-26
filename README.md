@@ -121,13 +121,12 @@ In our case, our particle system is based in a 2D scenario. There are many ways 
 
 
 ## 3. The structure
-Down below there’s a simple scheme of the structure of the system:
+Here there is an example on how the system is made. I have to say that at this point, this isn't my work, this part is extracted from another github project about particles that excelently explains how to make one. 
 
 So basically we have a module called j1ParticleSystem that will contain a list of emitters. Inside these emitters we will have all the data we have gotten from the xml and they will contain a pool of particles that will be also updated and rendered on screen.
 
 In case you wonder how the whole code is organized here’s a simple scheme. Our application has a module for each category call. Our application code is structured in modules. The main module (called j1App.cpp) manages all the other modules calling in a loop its respective awake, preupdate, update, postupdte, cleanup that they share thorugh a base class j1Module. So our j1ParticleSystem will be one of these modules that will update all the emitters that at the same time will update its respective particles. Down below a basic scheme of this shows what has been explained:
 
-code_scheme
 
 4.1 Particle system module
 This is the module in charge of everything that happens with our particles. We will not cover how it works as it’s something generic that can be implemented according to your needs and this tutorial is focused on the particles. With this module you can:
