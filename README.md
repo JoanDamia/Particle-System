@@ -12,3 +12,5 @@ https://lazyfoo.net/SDL_tutorials/lesson28/index.php
 https://youtu.be/eyo9jRsJBwY
 
 https://glusoft.com/tutorials/sdl2/creating-particle-system
+
+https://github.com/JoanDamia/Particle-System/blob/gh-pages/README.md
