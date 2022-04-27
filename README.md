@@ -362,11 +362,11 @@ We can have a lot of randomization to make the effect even more organic. That de
 
 So if we want to create a fire what we need to do is to to change the start and end color, put the blending mode to additive to make it glow, reduce alpha color over time… And will get something like this.
 
-![image](https://user-images.githubusercontent.com/79161216/165370786-dba0c1e2-19c6-498d-8446-d1d30f3d8fdd.png)
+![38663181-72c78e1a-3e36-11e8-8b45-0691b5dfa89f](https://user-images.githubusercontent.com/79161216/165465787-4fdd4e98-700d-4f62-ac74-291074f4cf3c.gif)
 
 But we can do explosions too:
 
-![image](https://user-images.githubusercontent.com/79161216/165370810-52fd9d9a-9d57-4218-893f-ea6eff1d5b71.png)
+![38663247-9c39fbca-3e36-11e8-95a6-9fb38cb485ca](https://user-images.githubusercontent.com/79161216/165465833-9fe0fedd-4645-4357-baf0-81ea4ffcec5a.gif)
 
 Another interesting thing is too play with the particle movement. We have done a linear movment but we can simulate paraboles, accelerated movement, circular and so on. A really cool and simple thing to do is to implement turbulunce in form of vortices. To put it simple, a vortex is like an spinning air wheel that causes objects to change it’s movment in a circular and chatoic way. We can simulate this by using a simple ad-hoc formula. In this article is explained how it’s done.
 
@@ -390,10 +390,11 @@ And then we need to modify particle movement like this:
 	pState.pLive.pos.y += (vy - pState.pLive.vel.y) * factor + pState.pLive.vel.y * dt;
 And we can get really cool things like this:
 
-![image](https://user-images.githubusercontent.com/79161216/165370870-dc233c14-019a-4219-adab-fe966887c0a0.png)
+![38663198-800c8b02-3e36-11e8-9590-81aceefbf5a6](https://user-images.githubusercontent.com/79161216/165465905-6b95ca9e-198f-48ea-b281-9eae3886216a.gif)
 
 If we set vortex speed to 0 particles will slow down when they get coloser. We can even do implosions!
-![image](https://user-images.githubusercontent.com/79161216/165370901-120af37e-b956-468f-8435-9fda4a53c63a.png)
+
+![38663306-c2bafee8-3e36-11e8-8f13-1bc3b337f5af](https://user-images.githubusercontent.com/79161216/165465946-03bd33e0-7447-4352-8416-60c0eec6c986.gif)
 
 
 
@@ -489,7 +490,7 @@ SOLUTION
 	return ret;
 When you’re don you should get something like this:
 
-![image](https://user-images.githubusercontent.com/79161216/165371920-1935ea97-1573-498e-82e4-b4b4a6cc29dc.png)
+![38695223-eefc435e-3e8b-11e8-96b0-fa666308a7fc](https://user-images.githubusercontent.com/79161216/165466056-f12a3f84-0103-4bcc-9261-45a0ffad60e4.gif)
 
 But what happens if particles have 100 of life? We don’t have enough particles in the pool. Let’s fix this.
 
@@ -545,7 +546,7 @@ SDL_Color Particle::RgbInterpolation(SDL_Color startColor, float timeStep, SDL_C
 }
 You should see this on screen:
 
-![image](https://user-images.githubusercontent.com/79161216/165372053-bd3b93e1-8a25-4a3d-82e6-dcaa63cf2caa.png)
+![38695345-4e53cbc4-3e8c-11e8-9af7-f0dd7ce9d7aa](https://user-images.githubusercontent.com/79161216/165466134-21856ee5-e1e1-4310-aca8-9d5ea114b42d.gif)
 
 TODO 4.2 - Adapt de blit particle method to take blending mode as an argument:
 
@@ -574,7 +575,7 @@ SOLUTION
 		
 You should see something like this on screen:
 
-![image](https://user-images.githubusercontent.com/79161216/165372111-d8c2edb0-2e59-4c5f-b2c3-8d8b9d994192.png)
+![38695575-fad8c930-3e8c-11e8-9b71-595ea0fa8a17](https://user-images.githubusercontent.com/79161216/165466181-c4e43479-4ac0-44da-bb4b-23f18bff40d9.gif)
 
 ### 5.5 TODO 5 - Fire and Smoke
 TODO 5 - Tweak the xml parameters:
@@ -604,7 +605,7 @@ SOLUTION
       
 Now we have a fire!
 
-![image](https://user-images.githubusercontent.com/79161216/165372150-302f3815-87ba-4c62-ae8d-6fb5c67ea450.png)
+![38695737-659b545e-3e8d-11e8-8774-04b6c3b1a9cd](https://user-images.githubusercontent.com/79161216/165466219-ce9f795b-143c-4f0b-b714-e3697bacc8bd.gif)
 
 ### 5.6 BONUS CODE - Vortices
 Delete the particle movement equations and uncomment this functions to add a vortex!
@@ -613,7 +614,8 @@ Delete the particle movement equations and uncomment this functions to add a vor
 	CalculateParticlePos(dt);
 Now everytime you approach the torch to the top left corner particles will be affected by the turbulence of the vortex like this:
 
-![image](https://user-images.githubusercontent.com/79161216/165372174-5bb4e593-dd87-43c4-a08c-ae0570f00cbe.png)
+
+![38695930-fd6424aa-3e8d-11e8-99fe-178db916413e](https://user-images.githubusercontent.com/79161216/165466254-98ffbf58-62b0-447e-8fce-1cc2bd729ba2.gif)
 
 
 ## 6. Performance
