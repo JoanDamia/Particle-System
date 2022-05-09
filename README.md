@@ -15,5 +15,8 @@ https://glusoft.com/tutorials/sdl2/creating-particle-system
 
 https://github.com/JoanDamia/Particle-System/blob/gh-pages/README.md
 
+[Particle System.pdf](https://github.com/JoanDamia/Particle-System/files/8649296/Particle.System.pdf)
+
+
 * [Github repository](https://github.com/nintervik/2D-Particle-System)  
 * [Releases](https://github.com/nintervik/2D-Particle-System/releases)
